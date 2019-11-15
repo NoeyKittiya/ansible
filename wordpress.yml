@@ -83,7 +83,17 @@
           group: apache
     - name: move file
       copy:
-          remote_src: no
-          src: /home/centos/ansible/wp-config.php
+          remote_src: yes
+          src: /var/www/html/wordpress/wp-config-sample.php
           dest: /var/www/html/wordpress/wp-config.php
-
+    - name: replace config
+      lineinfile:
+          path: /var/www/html/wordpress/wp-config.php
+          regexp: "{{ item.name }}"
+          line: "{{ item.replace }}"
+          state: present
+      loop:
+          - { name: DB_NAME, replace: wordpress }
+          - { name: DB_USER, replace: ansible }
+          - { name: DB_PASSWORD, replace: mypassword }
+          - { name: DB_HOST, replace: localhost }
