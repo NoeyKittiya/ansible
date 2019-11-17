@@ -43,17 +43,15 @@
       copy:
          src: /home/centos/ansible/script.sql
          dest: /tmp/script.sql
-    - name: test database
-      mysql_db:
-         login_user: root
-         login_password: abc
-         name: test
+    - name: mysqladmin password
+      mysql_user:
+         name: admin
+         password: abc
+         priv: '*.*:ALL'
          state: present
     - name: dump mysql
       block: 
         -  mysql_db:
-             login_user: root
-             login_password: abc
              state: import
              name: all
              target: /tmp/script.sql
@@ -87,13 +85,11 @@
           src: /var/www/html/wordpress/wp-config-sample.php
           dest: /var/www/html/wordpress/wp-config.php
     - name: replace config
-      lineinfile:
+      replace:
           path: /var/www/html/wordpress/wp-config.php
           regexp: "{{ item.name }}"
-          line: "{{ item.replace }}"
-          state: present
+          replace: "{{ item.replace }}"
       loop:
-          - { name: DB_NAME, replace: wordpress }
-          - { name: DB_USER, replace: ansible }
-          - { name: DB_PASSWORD, replace: mypassword }
-          - { name: DB_HOST, replace: localhost }
+          - { name: database_name_here, replace: wordpress }
+          - { name: username_here, replace: ansible }
+          - { name: password_here, replace: mypassword }
